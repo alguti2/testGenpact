@@ -1,0 +1,35 @@
+Private Sub btnExport_Click()
+Dim check As String
+check = checktems
+If checktems = "" Then
+Call searchExport
+Call exportData
+Call startExpo
+Else
+MsgBox check, vbExclamation
+End If
+End Sub
+
+Private Sub Cbexpoby_Change()
+Call changeCB
+End Sub
+
+Private Sub txtfrom_Change()
+If Not IsNumeric(txtfrom.text) And txtfrom.text <> "" Then
+MsgBox "Only numbers are allowed", vbExclamation
+txtfrom.text = ""
+txtfrom.SetFocus
+End If
+End Sub
+
+Private Sub txtto_Change()
+If Not IsNumeric(txtto.text) And txtto.text <> "" Then
+MsgBox "Only numbers are allowed", vbExclamation
+txtto.text = ""
+txtto.SetFocus
+End If
+End Sub
+
+Private Sub UserForm_Initialize()
+Call startExpo
+End Sub

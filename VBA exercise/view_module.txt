@@ -1,0 +1,12 @@
+Sub viewData()
+  DBview.listView.clear
+  DBview.listView.ColumnCount = 5
+  DBview.listView.ColumnHeads = True
+  Dim ifila As Integer
+  ifila = [Counta(DATABASE!A:A)]
+  If ifila > 1 Then
+   DBview.listView.RowSource = "DATABASE!A2:E" & ifila
+  Else
+  DBview.listView.RowSource = "DATABASE!A2:E2"
+ End If
+End Sub

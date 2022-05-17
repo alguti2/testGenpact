@@ -1,0 +1,90 @@
+Sub update()
+  Dim hoja As Worksheet
+  Dim icode As Integer
+  Dim count As Integer
+  Set hoja = ThisWorkbook.Sheets("DATABASE")
+  icode = DBform.txtCode.text
+  count = 1
+    With hoja
+     Do Until .Cells(count, 1).Value = ""
+      If .Cells(count, 1).Value = icode Then
+      On erro GoTo next1
+        .Cells(count, 1) = icode
+        .Cells(count, 2) = DBform.txtName.Value
+        .Cells(count, 3) = DBform.txtDate.Value
+        .Cells(count, 4) = DBform.txtEmail.Value
+        .Cells(count, 5) = DBform.txtAddress.Value
+      End If
+next1:
+      count = count + 1
+    Loop
+   End With
+End Sub
+
+Function elemetSelect() As Boolean
+  Dim i As Long
+  elementSelect = False
+    For i = 0 To DBform.listData.ListCount - 1
+        If DBform.listData.Selected(i) = True Then
+            elemetSelect = True
+            Exit For
+        End If
+        
+    Next i
+End Function
+
+
+Sub retriveItems()
+DBform.CbSearch.Enabled = False
+DBform.txtSearch.Enabled = False
+DBform.btnSearch.Enabled = False
+DBform.btnInsert.Caption = "Update"
+DBform.btnClear.Caption = "Cancel"
+DBform.txtCode.text = DBform.listData.List(DBform.listData.ListIndex, 0)
+DBform.txtName.text = DBform.listData.List(DBform.listData.ListIndex, 1)
+DBform.txtDate.text = DBform.listData.List(DBform.listData.ListIndex, 2)
+DBform.txtEmail.text = DBform.listData.List(DBform.listData.ListIndex, 3)
+DBform.txtAddress.text = DBform.listData.List(DBform.listData.ListIndex, 4)
+DBform.frameDB.Caption = "Update data"
+DBform.btnDelete.Enabled = False
+DBform.btnExport.Enabled = False
+DBform.btnEdit.Enabled = False
+
+End Sub
+
+Sub cancel()
+DBform.CbSearch.Enabled = True
+DBform.txtSearch.Enabled = True
+DBform.btnSearch.Enabled = True
+DBform.btnInsert.Caption = "Insert"
+DBform.btnClear.Caption = "Clear"
+DBform.txtCode.text = ""
+DBform.txtName.text = ""
+DBform.txtDate.text = ""
+DBform.txtEmail.text = ""
+DBform.txtAddress.text = ""
+DBform.frameDB.Caption = "New record"
+DBform.btnDelete.Enabled = True
+DBform.btnExport.Enabled = True
+DBform.btnEdit.Enabled = True
+End Sub
+
+Sub delete()
+  Dim hoja As Worksheet
+  Dim icode As Integer
+  Dim count As Integer
+  icode = DBform.listData.List(DBform.listData.ListIndex, 0)
+  count = 1
+  Set hoja = ThisWorkbook.Sheets("DATABASE")
+   With hoja
+    Do Until .Cells(count, 1).Value = ""
+     If .Cells(count, 1).Value = icode Then
+     On erro GoTo next1
+     .Rows(count).delete
+     End If
+next1:
+     count = count + 1
+    Loop
+   End With
+End Sub
+

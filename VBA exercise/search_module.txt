@@ -1,0 +1,76 @@
+Function validSearchValue() As String
+If Trim(DBform.txtSearch.text) = "" Then
+validSearchValue = "The search criteria cannot be blank"
+DBform.txtSearch.SetFocus
+Exit Function
+End If
+If Trim(DBform.CbSearch.text) = "" Then
+validSearchValue = "You must select a search criteria"
+DBform.CbSearch.SetFocus
+Exit Function
+End If
+End Function
+
+Sub searchValue()
+DBform.listData.clear
+Dim hoja As Worksheet
+ Set hoja = ThisWorkbook.Sheets("DATABASE")
+ With hoja
+If DBform.CbSearch.text = "Code" Then
+Dim count As Integer
+count = 2
+Do Until .Cells(count, 1).Value = ""
+If .Cells(count, 1).Value = DBform.txtSearch.text Then
+On erro GoTo next1
+DBform.listData.AddItem
+DBform.listData.List(0, 0) = .Cells(count, 1).Value
+DBform.listData.List(0, 1) = .Cells(count, 2).Value
+DBform.listData.List(0, 2) = .Cells(count, 3).Value
+DBform.listData.List(0, 3) = .Cells(count, 4).Value
+DBform.listData.List(0, 4) = .Cells(count, 5).Value
+End If
+next1:
+count = count + 1
+Loop
+DBform.btnEdit.Enabled = True
+DBform.btnDelete.Enabled = True
+If DBform.listData.ListCount = 0 Then
+DBform.listData.AddItem
+DBform.listData.List(0, 0) = "No results found"
+DBform.btnEdit.Enabled = False
+DBform.btnDelete.Enabled = False
+End If
+
+Else
+
+Dim count2 As Integer
+Dim countlist As Integer
+count2 = 2
+countlist = 0
+Do Until .Cells(count2, 1).Value = ""
+If InStr(1, .Cells(count2, 2).Value, DBform.txtSearch.text) > 0 Then
+On erro GoTo next2
+DBform.listData.AddItem
+DBform.listData.List(countlist, 0) = .Cells(count2, 1).Value
+DBform.listData.List(countlist, 1) = .Cells(count2, 2).Value
+DBform.listData.List(countlist, 2) = .Cells(count2, 3).Value
+DBform.listData.List(countlist, 3) = .Cells(count2, 4).Value
+DBform.listData.List(countlist, 4) = .Cells(count2, 5).Value
+countlist = countlist + 1
+End If
+next2:
+count2 = count2 + 1
+Loop
+DBform.btnEdit.Enabled = True
+DBform.btnDelete.Enabled = True
+If DBform.listData.ListCount = 0 Then
+DBform.listData.AddItem
+DBform.listData.List(0, 0) = "No results found"
+DBform.btnEdit.Enabled = False
+DBform.btnDelete.Enabled = False
+End If
+
+End If
+End With
+    
+End Sub

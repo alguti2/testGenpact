@@ -1,0 +1,82 @@
+Private Sub btnDelete_Click()
+ If elemetSelect = False Then
+        MsgBox "No element is selected", vbExclamation
+     Else
+    mensaje3 = MsgBox("Do you want to delete the data?", vbYesNo + vbInformation, "Confirmation")
+    If mensaje3 = vbNo Then Exit Sub
+     Call delete
+     Call searchValue
+    End If
+End Sub
+
+Private Sub btnEdit_Click()
+ If elemetSelect = False Then
+        MsgBox "No element is selected", vbExclamation
+     Else
+     Call retriveItems
+    End If
+
+    
+End Sub
+
+Private Sub btnExport_Click()
+DBexport.Show
+End Sub
+
+Private Sub btnSearch_Click()
+Dim criteria As String
+criteria = validSearchValue
+If criteria = "" Then
+Call searchValue
+Else
+MsgBox criteria, vbExclamation
+End If
+End Sub
+
+Private Sub btnView_Click()
+DBview.Show
+End Sub
+
+Private Sub UserForm_Initialize()
+Call start
+End Sub
+
+Private Sub btnInsert_Click()
+If DBform.btnInsert.Caption = "Insert" Then
+  Dim mensaje As VbMsgBoxResult
+  Dim valid As String
+    mensaje = MsgBox("Do you want to insert the data?", vbYesNo + vbInformation, "Confirmation")
+    If mensaje = vbNo Then Exit Sub
+    valid = validateRecords
+    If valid = "" Then
+    Call insert
+    Call clear
+    Else
+    MsgBox valid, vbExclamation
+    End If
+Else
+    Dim mensaje2 As VbMsgBoxResult
+  Dim valid2 As String
+    mensaje2 = MsgBox("Do you want to update the data?", vbYesNo + vbInformation, "Confirmation")
+    If mensaje2 = vbNo Then Exit Sub
+    valid2 = validateRecords
+    If valid2 = "" Then
+    Call update
+    Call cancel
+    Call searchValue
+    Else
+    MsgBox valid2, vbExclamation
+    End If
+End If
+
+End Sub
+
+Private Sub btnClear_Click()
+If DBform.btnClear.Caption = "Clear" Then
+Call clear
+Else
+Call cancel
+Call searchValue
+End If
+
+End Sub

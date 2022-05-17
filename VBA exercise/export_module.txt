@@ -1,0 +1,139 @@
+Sub startExpo()
+DBexport.Cbexpoby.clear
+DBexport.Cbexpoby.AddItem "Code"
+DBexport.Cbexpoby.AddItem "Name"
+DBexport.Cbexpoby.ListIndex = 0
+DBexport.Cbexpoby.Style = 2
+DBexport.txtfrom.Enabled = True
+DBexport.txtto.Enabled = True
+DBexport.txtNameexp.Enabled = False
+DBexport.listExport.Visible = False
+DBexport.listExport.clear
+DBexport.txtfrom.text = ""
+DBexport.txtto.text = ""
+DBexport.txtNameexp.text = ""
+DBexport.listExport.ColumnCount = 5
+End Sub
+
+
+Sub changeCB()
+If DBexport.Cbexpoby.text = "Code" Then
+DBexport.txtfrom.Enabled = True
+DBexport.txtto.Enabled = True
+DBexport.txtfrom.text = ""
+DBexport.txtto.text = ""
+DBexport.txtNameexp.Enabled = False
+DBexport.txtNameexp.text = ""
+DBexport.txtfrom.SetFocus
+Else
+DBexport.txtfrom.Enabled = False
+DBexport.txtto.Enabled = False
+DBexport.txtfrom.text = ""
+DBexport.txtto.text = ""
+DBexport.txtNameexp.Enabled = True
+DBexport.txtNameexp.text = ""
+DBexport.txtNameexp.SetFocus
+End If
+End Sub
+
+Function checktems() As String
+If DBexport.Cbexpoby.text = "Code" Then
+If DBexport.txtfrom.text = "" Then
+checktems = "Initial value cannot be blank"
+DBexport.txtfrom.SetFocus
+Exit Function
+End If
+If DBexport.txtto.text = "" Then
+checktems = "Final value cannot be blank"
+DBexport.txtto.SetFocus
+Exit Function
+End If
+
+Else
+If DBexport.txtNameexp.text = "" Then
+checktems = "Search criteria cannot be blank"
+DBexport.txtNameexp.SetFocus
+Exit Function
+End If
+End If
+End Function
+
+Sub searchExport()
+DBexport.listExport.clear
+ Dim hoja As Worksheet
+ Set hoja = ThisWorkbook.Sheets("DATABASE")
+ With hoja
+If DBexport.Cbexpoby.text = "Code" Then
+Dim valuefrom As Integer
+Dim valueto As Integer
+Dim count As Integer
+Dim countlist As Integer
+countlist = 0
+count = 2
+valuefrom = DBexport.txtfrom.text
+valueto = DBexport.txtto.text
+
+Do Until .Cells(count, 1).Value = ""
+If .Cells(count, 1).Value >= valuefrom And .Cells(count, 1).Value <= valueto Then
+On erro GoTo next1
+DBexport.listExport.AddItem
+DBexport.listExport.List(countlist, 0) = .Cells(count, 1).Value
+DBexport.listExport.List(countlist, 1) = .Cells(count, 2).Value
+DBexport.listExport.List(countlist, 2) = .Cells(count, 3).Value
+DBexport.listExport.List(countlist, 3) = .Cells(count, 4).Value
+DBexport.listExport.List(countlist, 4) = .Cells(count, 5).Value
+countlist = countlist + 1
+End If
+next1:
+count = count + 1
+Loop
+
+Else
+Dim valueName As String
+Dim count2 As Integer
+Dim countlist2 As Integer
+count2 = 2
+countlist2 = 0
+valueName = DBexport.txtNameexp.text
+Do Until .Cells(count2, 1).Value = ""
+If InStr(1, .Cells(count2, 2).Value, valueName) > 0 Then
+On erro GoTo next2
+DBexport.listExport.AddItem
+DBexport.listExport.List(countlist2, 0) = .Cells(count2, 1).Value
+DBexport.listExport.List(countlist2, 1) = .Cells(count2, 2).Value
+DBexport.listExport.List(countlist2, 2) = .Cells(count2, 3).Value
+DBexport.listExport.List(countlist2, 3) = .Cells(count2, 4).Value
+DBexport.listExport.List(countlist2, 4) = .Cells(count2, 5).Value
+countlist2 = countlist2 + 1
+End If
+next2:
+count2 = count2 + 1
+Loop
+
+End If
+End With
+
+End Sub
+
+Sub exportData()
+If DBexport.listExport.ListCount > 0 Then
+Workbooks.Add
+Range("a1").Value = "CODE"
+Range("b1").Value = "NAME"
+Range("c1").Value = "DATE OF BIRTH"
+Range("d1").Value = "EMAIL"
+Range("e1").Value = "HOME ADDRESS"
+
+For i = 0 To DBexport.listExport.ListCount - 1
+Range("a" & i + 2).Value = DBexport.listExport.List(i, 0)
+Range("b" & i + 2).Value = DBexport.listExport.List(i, 1)
+Range("c" & i + 2).Value = DBexport.listExport.List(i, 2)
+Range("d" & i + 2).Value = DBexport.listExport.List(i, 3)
+Range("e" & i + 2).Value = DBexport.listExport.List(i, 4)
+Next i
+
+MsgBox "Data exported successfully", vbInformation
+Else
+MsgBox "No data found to export", vbExclamation
+End If
+End Sub

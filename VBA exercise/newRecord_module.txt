@@ -1,0 +1,152 @@
+Sub insert()
+    Dim hoja As Worksheet
+    Dim icode As Integer
+    Dim idcode As Integer
+    Dim count As Integer
+    idcode = 1
+    Set hoja = ThisWorkbook.Sheets("DATABASE")
+    icode = [Counta(DATABASE!A:A)] + 1
+    With hoja
+   If icode > 2 Then
+    count = 2
+    Do Until .Cells(count, 1).Value = ""
+      If .Cells(count, 1).Value > idcode Then
+       On erro GoTo next1
+       idcode = .Cells(count, 1).Value
+      End If
+next1:
+      count = count + 1
+    Loop
+        .Cells(icode, 1) = idcode + 1
+        .Cells(icode, 2) = DBform.txtName.Value
+        .Cells(icode, 3) = DBform.txtDate.Value
+        .Cells(icode, 4) = DBform.txtEmail.Value
+        .Cells(icode, 5) = DBform.txtAddress.Value
+    Else
+        .Cells(icode, 1) = icode - 1
+        .Cells(icode, 2) = DBform.txtName.Value
+        .Cells(icode, 3) = DBform.txtDate.Value
+        .Cells(icode, 4) = DBform.txtEmail.Value
+        .Cells(icode, 5) = DBform.txtAddress.Value
+    End If
+    End With
+    
+End Sub
+
+
+Function validateRecords() As String
+
+If Trim(DBform.txtName.text) = "" Then
+validateRecords = "The name field cannot be empty"
+DBform.txtName.SetFocus
+Exit Function
+End If
+
+If Trim(DBform.txtDate.text) = "" Then
+validateRecords = "The Date birth field cannot be empty"
+DBform.txtDate.SetFocus
+Exit Function
+End If
+
+If Not IsDate(Trim(DBform.txtDate.text)) Then
+validateRecords = "The date of birth field does not have the correct format"
+DBform.txtDate.text = ""
+DBform.txtDate.SetFocus
+Exit Function
+End If
+
+If IsDate(Trim(DBform.txtDate.text)) Then
+If InStr(1, DBform.txtDate.text, "/") = 0 Then
+validateRecords = "The date of birth field does not have the format mm/dd/yyyy"
+DBform.txtDate.text = ""
+DBform.txtDate.SetFocus
+Exit Function
+End If
+
+Dim arrayDate() As String
+arrayDate = Split(DBform.txtDate.text, "/")
+
+If IsNumeric(arrayDate(0)) = False Or IsNumeric(arrayDate(1)) = False Or IsNumeric(arrayDate(2)) = False Then
+validateRecords = "The date of birth field does not have the format mm/dd/yyyy"
+DBform.txtDate.text = ""
+DBform.txtDate.SetFocus
+Exit Function
+End If
+
+If arrayDate(0) > 12 Then
+validateRecords = "The date of birth field does not have the format mm/dd/yyyy"
+DBform.txtDate.text = ""
+DBform.txtDate.SetFocus
+Exit Function
+End If
+
+If Len(arrayDate(0)) <> 2 Or Len(arrayDate(1)) <> 2 Or Len(arrayDate(2)) <> 4 Then
+validateRecords = "The date of birth field does not have the format mm/dd/yyyy"
+DBform.txtDate.text = ""
+DBform.txtDate.SetFocus
+Exit Function
+End If
+
+Dim d1 As Date
+Dim d2 As Date
+d1 = CDate(DBform.txtDate.text)
+d2 = CDate(Now())
+
+If d1 > d2 Then
+validateRecords = "The chosen date cannot be greater than the current date"
+DBform.txtDate.text = ""
+DBform.txtDate.SetFocus
+Exit Function
+End If
+End If
+If Trim(DBform.txtEmail.text) <> "" Then
+Dim reg As Object
+Set reg = CreateObject("vbscript.RegExp")
+reg.Pattern = "^[a-zA-Z0-9\._-]+@([a-zA-Z0-9_-]+\.)+([a-zA-Z]{2,3})$"
+If reg.Test(DBform.txtEmail.text) = False Then
+validateRecords = "The email field is not formatted correctly"
+DBform.txtEmail.text = ""
+DBform.txtEmail.SetFocus
+Exit Function
+End If
+Set reg = Nothing
+End If
+
+End Function
+
+Sub clear()
+DBform.txtName.text = ""
+DBform.txtDate.text = ""
+DBform.txtEmail.text = ""
+DBform.txtAddress.text = ""
+DBform.txtSearch.text = ""
+End Sub
+
+Sub start()
+DBform.txtName.text = ""
+DBform.txtDate.text = ""
+DBform.txtEmail.text = ""
+DBform.txtAddress.text = ""
+DBform.txtSearch.text = ""
+DBform.listData.clear
+DBform.CbSearch.clear
+DBform.CbSearch.AddItem "Code"
+DBform.CbSearch.AddItem "Name"
+DBform.CbSearch.ListIndex = 0
+DBform.CbSearch.Style = 2
+DBform.txtName.SetFocus
+DBform.listData.ColumnCount = 5
+DBform.txtCode.text = ""
+DBform.txtCode.Visible = False
+DBform.btnClear.Caption = "Clear"
+DBform.btnInsert.Caption = "Insert"
+DBform.frameDB.Caption = "New record"
+DBform.btnEdit.Enabled = False
+DBform.btnDelete.Enabled = False
+End Sub
+
+Sub Show_Form()
+    
+    DBform.Show
+
+End Sub
